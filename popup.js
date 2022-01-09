@@ -710,7 +710,7 @@ function scanPage() {
         getOptionElem(
             'download_subdirectory',
             'text',
-            '下载目录',
+            '保存文件夹',
             function (event) {
                 if (this.value.includes('.')) {
                     this.value = this.value.replace(dotRegex, '')
@@ -826,7 +826,7 @@ function scanPage() {
     )
 
     elements.actions.appendChild(
-        getOptionElem('use_link_text', 'checkbox', '扫描链接文本', null, true)
+        getOptionElem('use_link_text', 'checkbox', '使用默认名称', null, true)
     )
 
     elements.actions.appendChild(document.createElement('p'))
@@ -902,6 +902,13 @@ function scanPage() {
 
     let help = [
         {
+            element: elements.download_status.parentNode,
+            name: '下载状态',
+            content: `显示当前正在下载的文件数量。
+            <b>取消当前页签下载任务</b>：取消当前页签正在进行的下载 (或其他任何与当前页签相同链接的页签).
+            <b>取消全部下载任务</b>：取消当前所有正在进行的下载。`
+        },
+        {
             element: helpButton,
             name: '帮助',
             content: `<i>批量文件下载器</i>是一个简单快速的文件批量下载工具。
@@ -939,9 +946,9 @@ function scanPage() {
         {
             element: elements.actions,
             name: '下载',
-            content: `<b>下载目录</b>：Chrome的下载文件夹的子文件夹，文件将被下载到其中。
+            content: `对下载的方式进行配置。
             由于Chrome的下载系统的限制，文件只能下载到Chrome的下载文件夹，或其中的子文件夹。
-            
+            <b>保存文件夹</b>：Chrome的下载文件夹的子文件夹，文件将被下载到其中。
             <b>覆盖文件</b>：如果启用，新的下载将覆盖文件夹中已经存在的同名文件。
             <b>使用自定义名称</b>：如果启用，下载时将使用文件列表中的名称。否则将使用文件的默认名称。
             <b>展示保存对话框</b>：如果启用，将显示每次下载的另存为对话框。
@@ -952,19 +959,13 @@ function scanPage() {
         },
         {
             element: elements.actions,
-            name: '选项',
-            content: `<b>重新扫描</b>：重新在活动页签中查找链接。并刷新<i>文件列表</i>!
-            <b>扫描链接文本</b>：将获取链接文本并使用它作为文件名。
+            name: '操作',
+            content: `一些对下载器的操作
+            <b>重新扫描</b>：重新扫描当前页签。并刷新<i>文件列表</i>!
+            <b>使用默认名称</b>：使用链接文本作为保存时的文件名。
             <b>查看下载界面</b>：打开Chrome的下载页面。
             <b>选项</b>：打开<i>批量文件下载器</i>扩展选项。
             <b>帮助</b>：打开帮助界面, 就是你现在看到的这个:P`
-        },
-        {
-            element: elements.download_status.parentNode,
-            name: '下载状态',
-            content: `显示当前正在下载的文件数量。
-            <b>取消当前页签下载任务</b>：取消当前页签正在进行的下载 (或其他任何与当前页签相同链接的页签).
-            <b>取消全部下载任务</b>：取消当前所有正在进行的下载。`
         }
     ]
 
