@@ -618,13 +618,13 @@ function scanPage() {
     }
 
     elements.controls.appendChild(
-        getOptionElem('include_media', 'checkbox', '可见文件', null, true)
+        getOptionElem('include_media', 'checkbox', '多媒体', null, true)
     )
     elements.controls.appendChild(
         getOptionElem(
             'include_website_links',
             'checkbox',
-            '网页连接',
+            '网页',
             null,
             true
         )
@@ -645,10 +645,10 @@ function scanPage() {
     elements.controls.appendChild(document.createElement('div'))
     elements.controls.lastChild.className = 'multi'
     elements.controls.lastChild.appendChild(
-        getOptionElem('filter_name', 'text', '根据名称筛选')
+        getOptionElem('filter_name', 'text', '名称筛选')
     )
     elements.controls.lastChild.appendChild(
-        getOptionElem('', 'checkbox', '根据名称排除', function (e) {
+        getOptionElem('', 'checkbox', '名称排除', function (e) {
             let elem = document.getElementById('OPTION_filter_name_exclude')
 
             if (this.checked) {
@@ -677,10 +677,10 @@ function scanPage() {
     elements.controls.appendChild(document.createElement('div'))
     elements.controls.lastChild.className = 'multi'
     elements.controls.lastChild.appendChild(
-        getOptionElem('filter_ext', 'text', '根据类型筛选')
+        getOptionElem('filter_ext', 'text', '类型筛选')
     )
     elements.controls.lastChild.appendChild(
-        getOptionElem('', 'checkbox', '根据类型排除', function (e) {
+        getOptionElem('', 'checkbox', '类型排除', function (e) {
             let elem = document.getElementById('OPTION_filter_ext_exclude')
 
             if (this.checked) {
@@ -710,7 +710,7 @@ function scanPage() {
         getOptionElem(
             'download_subdirectory',
             'text',
-            'Sub-folder',
+            '下载目录',
             function (event) {
                 if (this.value.includes('.')) {
                     this.value = this.value.replace(dotRegex, '')
@@ -730,7 +730,7 @@ function scanPage() {
         getOptionElem(
             'download_overwrite',
             'checkbox',
-            'Overwrite existing',
+            '覆盖文件',
             null,
             true
         )
@@ -740,7 +740,7 @@ function scanPage() {
         getOptionElem(
             'download_custom_name',
             'checkbox',
-            'Use custom name',
+            '使用自定义名称',
             null,
             true
         )
@@ -749,7 +749,7 @@ function scanPage() {
         getOptionElem(
             'download_select_location',
             'checkbox',
-            '显示保存界面',
+            '展示保存对话框',
             null,
             true
         )
@@ -820,13 +820,13 @@ function scanPage() {
     elements.actions.appendChild(document.createElement('p'))
 
     elements.actions.appendChild(
-        getOptionElem('', 'button', 'Rescan Page', () => {
+        getOptionElem('', 'button', '重新扫描', () => {
             scanPage()
         })
     )
 
     elements.actions.appendChild(
-        getOptionElem('use_link_text', 'checkbox', 'Scan link text', null, true)
+        getOptionElem('use_link_text', 'checkbox', '扫描链接文本', null, true)
     )
 
     elements.actions.appendChild(document.createElement('p'))
@@ -904,72 +904,67 @@ function scanPage() {
         {
             element: helpButton,
             name: '帮助',
-            content: `<i>批量文件下载器</i> 是一个简单快速的网页文件查找下载工具。
-            当插件开启时，会自动扫描当前页签所有可下载资源并将其展示在文件列表中，并且可以根据名称和类型对文件进行过滤。
-            但是当页面内容变更时，<i>批量文件下载器</i>无法扫描到新增的文件资源。
-
-            您可以在任意时间点击<b>帮助</b>按钮获取帮助，也可以点击右上角<b>关闭</b>退出此界面。
-            点击其他项目，获取更多帮助~
+            content: `<i>批量文件下载器</i>是一个简单快速的文件批量下载工具。
+            当插件开启时，会自动扫描当前页签所有可下载资源并将其展示在文件列表中，并且可以根据名称和类型对文件进行过滤。但是当页面内容变更时，<i>批量文件下载器</i>无法扫描到新增的文件资源。
+            您可以在随时点击<b>帮助</b>按钮获取帮助，也可以点击右上角<b>关闭</b>退出此界面。点击下方类目，获取更多帮助~
             
             本插件为开源项目(https://github.com/luckyzerg/Multi-file-downloader)
-            基于<b>Multi-file-downloade</b>进行二次开发(https://github.com/brttd/Multi-file-downloader)
+            基于<b>Multi-file-downloade</b>进行汉化(https://github.com/brttd/Multi-file-downloader)
             `
         },
         {
             element: elements.controls,
             name: '过滤器',
-            content: `The files found on a page can be filtered before being downloaded.
-<b>Visible Media</b>: Include images and videos shown directly in pages (links to media files will be included regardless of this option).
-<b>Web links</b>: Include links with extensions commonly used for websites (.html, .php, etc).
+            content: `在下载之前，可以对页面上的文件进行过滤。
+            <b>多媒体</b>：包括图像和视频等直接显示在页面中的文件 (无论此选项如何，存在链接的文件都将被加入到列表中).
+            <b>网页</b>：包括网站常用的扩展链接 (例：.html, .php).
 
-<b>Filter by name</b>: Only files where the URL or name matches will be listed.
-<b>Filter by type</b>: Only files where the file type (extension) matches will be listed.
+            <b>名称筛选</b>：只有URL或名称匹配的文件才会被列出。
+            <b>类型筛选</b>：只有文件类型(扩展名)匹配的文件才会被列出。
 
-If multiple filters are needed, you can enter each one separated by a comma.
+            如果需要多个过滤条件，您可以输入每个过滤条件，之间用逗号分隔。
 
-<b>Exclude by name/type</b>: Files which match the filter will be excluded from the list.`
+            <b>名称/类型 排除</b>: 匹配筛选条件的文件将从列表中排除。`
         },
         {
             element: elements.list.parentNode,
-            name: 'File List',
-            content: `All files found on a page which match the filters are shown here.
-The list can be sorted by <b>Domain</b>, <b>URL</b>, <b>Name</b>, and <b>Type</b>. Click on a column to sort it, or reverse the sort direction.
-The <b>Name</b> column can be edited to give a custom filename used when the files are downloaded.
+            name: '文件列表',
+            content: `在页面上找到的，匹配过滤条件的文件都显示在这里。
+            列表可以通过<b>域名</b>, <b>链接</b>, <b>名称</b>, 和 <b>类型</b>进行排序. 单击列名对其正序或倒序排序。
+            您可以编辑<b>名称</b>列以给出一个在下载文件时使用的自定义文件名（需要勾选<b>使用自定义名称</b>）。
 
-Each file can be enabled or disabled by clicking the toggle button in the leftmost column.
-Each file can be downloaded on it's own by clicking the download button in the rightmost column.`
+            每个文件都可以通过单击最左边列中的切换按钮来选中或取消，默认为选中状态。
+            每个文件都可以通过单击最右边一栏的下载按钮自行下载。`
         },
         {
             element: elements.actions,
-            name: 'Downloading',
-            content: `<b>Sub-folder</b>: A sub-folder of Chrome's download folder, into which files will be downloaded.
-Due to limitations with Chrome's download system, files can only be downloaded to Chrome's downloads folder, or a sub-folder within it.
+            name: '下载',
+            content: `<b>下载目录</b>：Chrome的下载文件夹的子文件夹，文件将被下载到其中。
+            由于Chrome的下载系统的限制，文件只能下载到Chrome的下载文件夹，或其中的子文件夹。
+            
+            <b>覆盖文件</b>：如果启用，新的下载将覆盖文件夹中已经存在的同名文件。
+            <b>使用自定义名称</b>：如果启用，下载时将使用文件列表中的名称。否则将使用文件的默认名称。
+            <b>展示保存对话框</b>：如果启用，将显示每次下载的另存为对话框。
 
-<b>Overwrite existing</b>: If enabled, new downloads will overwrite any already existing file with the same name.
-<b>Use custom name</b>: If enabled, downloads will the <b>Name</b> entry in the <i>File List</i>. Otherwise, the default name of the file will be used.
-<b>Show save dialog</b>: If enabled, will show the Save As dialog for every download.
-
-<b>✖</b>: Disable all files.
-<b>✔</b>: Enable all files.
-<b>Download</b>: Download all enabled files.`
+            <b>✖</b>：取消所有文件。
+            <b>✔</b>：勾选所有文件。
+            <b>下载</b>：下载所有勾选的文件。`
         },
         {
             element: elements.actions,
-            name: 'Options',
-            content: `<b>Rescan Page</b>: Searches the active tab for links again. This will reset the <i>File List</i>!
-<b>Scan link text</b>: Will take link text and use it as the file name.
-
-<b>View Downloads</b>: Opens Chrome's downloads page.
-<b>Open Options</b>: Opens the <i>Multi-File Downloader</i> extension options.
-<b>Help</b>: Opens the help, which you're viewing now.`
+            name: '选项',
+            content: `<b>重新扫描</b>：重新在活动页签中查找链接。并刷新<i>文件列表</i>!
+            <b>扫描链接文本</b>：将获取链接文本并使用它作为文件名。
+            <b>查看下载界面</b>：打开Chrome的下载页面。
+            <b>选项</b>：打开<i>批量文件下载器</i>扩展选项。
+            <b>帮助</b>：打开帮助界面, 就是你现在看到的这个:P`
         },
         {
             element: elements.download_status.parentNode,
-            name: 'Downloads Status',
-            content: `Displays how many files are currently being downloaded.
-
-<b>Cancel From This Tab</b>: Cancels all currently in-progress downloads which were downloaded from the active tab (or from any other tab with the same URL).
-<b>Cancel All</b>: Cancels all currently in-progress downloads.`
+            name: '下载状态',
+            content: `显示当前正在下载的文件数量。
+            <b>取消当前页签下载任务</b>：取消当前页签正在进行的下载 (或其他任何与当前页签相同链接的页签).
+            <b>取消全部下载任务</b>：取消当前所有正在进行的下载。`
         }
     ]
 
@@ -1040,7 +1035,7 @@ Due to limitations with Chrome's download system, files can only be downloaded t
     helpElem.appendChild(document.createElement('ul'))
 
     helpElem.firstChild.appendChild(document.createElement('a'))
-    helpElem.firstChild.lastChild.textContent = 'Close'
+    helpElem.firstChild.lastChild.textContent = '关闭'
     helpElem.firstChild.lastChild.addEventListener('click', () => {
         helpElem.style.display = 'none'
         elements.status.style.display = 'none'
@@ -1145,9 +1140,9 @@ chrome.runtime.onMessage.addListener(message => {
 
         if (message.downloads.waiting >= 1) {
             elements.download_status.textContent +=
-                ', ' + message.downloads.waiting.toString() + ' d.'
+                ', ' + message.downloads.waiting.toString() + ' 在等待中'
         } else {
-            elements.download_status.textContent += '.'
+            elements.download_status.textContent += '。'
         }
     }
 })
@@ -1177,7 +1172,7 @@ elements.list.addEventListener('click', event => {
         if (downloaded_urls.includes(allFiles[index].url)) {
             if (
                 confirm(
-                    '当前文件已在下载队列中! 请问还要再次下载嘛?'
+                    '当前文件已在下载队列中！还要再次下载嘛？'
                 )
             ) {
                 downloadFile(allFiles[index])
@@ -1240,10 +1235,10 @@ chrome.extension.isAllowedFileSchemeAccess(allowed => {
 chrome.runtime.sendMessage('get-stats')
 
 let cancelActiveButton = document.createElement('button')
-cancelActiveButton.textContent = 'Cancel From This Tab'
+cancelActiveButton.textContent = '取消当前页签下载任务'
 
 let cancelAllButton = document.createElement('button')
-cancelAllButton.textContent = 'Cancel All'
+cancelAllButton.textContent = '取消全部下载任务'
 
 cancelActiveButton.addEventListener('click', () => {
     if (activeTabUrl) {
@@ -1254,7 +1249,7 @@ cancelActiveButton.addEventListener('click', () => {
     }
 })
 cancelAllButton.addEventListener('click', () => {
-    if (confirm('Are you sure you want to cancel all downloads?')) {
+    if (confirm('真的取消全部下载任务嘛?')) {
         chrome.runtime.sendMessage({
             cancel_downloads: true
         })
