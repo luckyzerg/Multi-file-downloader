@@ -479,7 +479,7 @@ function scanPage() {
         },
         e => {
             if (e === undefined) {
-                let message = 'Unable to access tab!'
+                let message = '不能访问当前页面!'
 
                 if (chrome.runtime.lastError) {
                     message += '\n\n' + chrome.runtime.lastError.message
@@ -618,13 +618,13 @@ function scanPage() {
     }
 
     elements.controls.appendChild(
-        getOptionElem('include_media', 'checkbox', 'Visible Media', null, true)
+        getOptionElem('include_media', 'checkbox', '可见文件', null, true)
     )
     elements.controls.appendChild(
         getOptionElem(
             'include_website_links',
             'checkbox',
-            'Web links',
+            '网页连接',
             null,
             true
         )
@@ -632,7 +632,7 @@ function scanPage() {
     elements.controls.appendChild(document.createElement('hr'))
 
     elements.controls.appendChild(
-        getOptionElem('filter_regex', 'text', 'RegExp URL filter')
+        getOptionElem('filter_regex', 'text', '过滤URL的正则')
     )
     elements.regex_message = document.createElement('label')
     elements.regex_message.className = 'message'
@@ -645,10 +645,10 @@ function scanPage() {
     elements.controls.appendChild(document.createElement('div'))
     elements.controls.lastChild.className = 'multi'
     elements.controls.lastChild.appendChild(
-        getOptionElem('filter_name', 'text', 'Filter by name')
+        getOptionElem('filter_name', 'text', '根据名称筛选')
     )
     elements.controls.lastChild.appendChild(
-        getOptionElem('', 'checkbox', 'Exclude by name', function(e) {
+        getOptionElem('', 'checkbox', '根据名称排除', function (e) {
             let elem = document.getElementById('OPTION_filter_name_exclude')
 
             if (this.checked) {
@@ -677,10 +677,10 @@ function scanPage() {
     elements.controls.appendChild(document.createElement('div'))
     elements.controls.lastChild.className = 'multi'
     elements.controls.lastChild.appendChild(
-        getOptionElem('filter_ext', 'text', 'Filter by type')
+        getOptionElem('filter_ext', 'text', '根据类型筛选')
     )
     elements.controls.lastChild.appendChild(
-        getOptionElem('', 'checkbox', 'Exclude by type', function(e) {
+        getOptionElem('', 'checkbox', '根据类型排除', function (e) {
             let elem = document.getElementById('OPTION_filter_ext_exclude')
 
             if (this.checked) {
@@ -711,7 +711,7 @@ function scanPage() {
             'download_subdirectory',
             'text',
             'Sub-folder',
-            function(event) {
+            function (event) {
                 if (this.value.includes('.')) {
                     this.value = this.value.replace(dotRegex, '')
                 }
@@ -749,7 +749,7 @@ function scanPage() {
         getOptionElem(
             'download_select_location',
             'checkbox',
-            'Show save dialog',
+            '显示保存界面',
             null,
             true
         )
@@ -783,7 +783,7 @@ function scanPage() {
     )
     //Download all button
     elements.actions.appendChild(
-        getOptionElem('highlight', 'button', 'Download', () => {
+        getOptionElem('highlight', 'button', '下载', () => {
             let duplicates = []
 
             for (let i = 0; i < allFiles.length; i++) {
@@ -833,14 +833,14 @@ function scanPage() {
 
     //Open downloads page
     elements.actions.appendChild(
-        getOptionElem('', 'button', 'View Downloads', () => {
+        getOptionElem('', 'button', '查看下载页面', () => {
             chrome.tabs.create({ url: 'chrome://downloads' })
         })
     )
 
     //Open extension options
     elements.actions.appendChild(
-        getOptionElem('', 'button', 'Open Options', () => {
+        getOptionElem('', 'button', '配置', () => {
             chrome.runtime.openOptionsPage()
         })
     )
@@ -896,25 +896,28 @@ function scanPage() {
 
 //Help setup
 {
-    let helpButton = getOptionElem('', 'button', 'Help', () => {
+    let helpButton = getOptionElem('', 'button', '帮助', () => {
         showHelp()
     })
 
     let help = [
         {
             element: helpButton,
-            name: 'Help',
-            content: `<i>Multi-File Downloader</i> is an extension to make finding and downloading files from websites simple and quick.
-When the downloader popup is open (like now), the active tab will be scanned for links and other file download information. Any files found are then displayed in a the <i>File List</i>. They can be filtered by name or file type.
+            name: '帮助',
+            content: `<i>批量文件下载器</i> 是一个简单快速的网页文件查找下载工具。
+            当插件开启时，会自动扫描当前页签所有可下载资源并将其展示在文件列表中，并且可以根据名称和类型对文件进行过滤。
+            但是当页面内容变更时，<i>批量文件下载器</i>无法扫描到新增的文件资源。
 
-Occasionally websites use interactive links or other types of buttons so that the actual file URL is only given after clicking a link. When a site does this, <i>Multi-File Downloader</i> will be unable to find those files and they will not appear in the <i>File List</i>.
-
-You can view this help at any time by clicking the <b>Help</b> button. You can close it by clicking the <b>Close</b> button in the top right.
-The help is divided into different parts for each section of the popup interface, listed below. Click on a section to view the information about it.`
+            您可以在任意时间点击<b>帮助</b>按钮获取帮助，也可以点击右上角<b>关闭</b>退出此界面。
+            点击其他项目，获取更多帮助~
+            
+            本插件为开源项目(https://github.com/luckyzerg/Multi-file-downloader)
+            基于<b>Multi-file-downloade</b>进行二次开发(https://github.com/brttd/Multi-file-downloader)
+            `
         },
         {
             element: elements.controls,
-            name: 'Filters',
+            name: '过滤器',
             content: `The files found on a page can be filtered before being downloaded.
 <b>Visible Media</b>: Include images and videos shown directly in pages (links to media files will be included regardless of this option).
 <b>Web links</b>: Include links with extensions commonly used for websites (.html, .php, etc).
@@ -1120,14 +1123,14 @@ chrome.runtime.onMessage.addListener(message => {
         console.log(message.downloads)
 
         if (message.downloads.active === 0) {
-            elements.download_status.textContent = 'No active downloads'
+            elements.download_status.textContent = '没有下载中的文件'
             elements.download_status.parentNode.className = ''
         } else if (message.downloads.active === 1) {
-            elements.download_status.textContent = '1 active download'
+            elements.download_status.textContent = '1个下载中'
             elements.download_status.parentNode.className = 'active'
         } else {
             elements.download_status.textContent =
-                message.downloads.active.toString() + ' active downloads'
+                message.downloads.active.toString() + ' 下载中'
 
             elements.download_status.parentNode.className = 'active'
         }
@@ -1142,7 +1145,7 @@ chrome.runtime.onMessage.addListener(message => {
 
         if (message.downloads.waiting >= 1) {
             elements.download_status.textContent +=
-                ', ' + message.downloads.waiting.toString() + ' waiting.'
+                ', ' + message.downloads.waiting.toString() + ' d.'
         } else {
             elements.download_status.textContent += '.'
         }
@@ -1174,7 +1177,7 @@ elements.list.addEventListener('click', event => {
         if (downloaded_urls.includes(allFiles[index].url)) {
             if (
                 confirm(
-                    'This file has already been sent to the download queue! Do you want to download it again?'
+                    '当前文件已在下载队列中! 请问还要再次下载嘛?'
                 )
             ) {
                 downloadFile(allFiles[index])
@@ -1208,7 +1211,7 @@ chrome.tabs.query(
                 }
             })
         } else {
-            let message = 'Unable to access tab!\nPlease retry.\n'
+            let message = '不允许访问当前页签!\n请重试.\n'
 
             if (chrome.runtime.lastError) {
                 message += '\n\n' + chrome.runtime.lastError.message
