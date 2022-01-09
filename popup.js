@@ -902,15 +902,8 @@ function scanPage() {
 
     let help = [
         {
-            element: elements.download_status.parentNode,
-            name: '下载状态',
-            content: `显示当前正在下载的文件数量。
-            <b>取消当前页签下载任务</b>：取消当前页签正在进行的下载 (或其他任何与当前页签相同链接的页签).
-            <b>取消全部下载任务</b>：取消当前所有正在进行的下载。`
-        },
-        {
             element: helpButton,
-            name: '帮助',
+            name: '关于',
             content: `<i>批量文件下载器</i>是一个简单快速的文件批量下载工具。
             当插件开启时，会自动扫描当前页签所有可下载资源并将其展示在文件列表中，并且可以根据名称和类型对文件进行过滤。但是当页面内容变更时，<i>批量文件下载器</i>无法扫描到新增的文件资源。
             您可以在随时点击<b>帮助</b>按钮获取帮助，也可以点击右上角<b>关闭</b>退出此界面。点击下方类目，获取更多帮助~
@@ -918,6 +911,13 @@ function scanPage() {
             本插件为开源项目(https://github.com/luckyzerg/Multi-file-downloader)
             基于<b>Multi-file-downloade</b>进行汉化(https://github.com/brttd/Multi-file-downloader)
             `
+        },
+        {
+            element: elements.download_status.parentNode,
+            name: '下载状态',
+            content: `显示当前正在下载的文件数量。
+            <b>取消当前页签下载任务</b>：取消当前页签正在进行的下载 (或其他任何与当前页签相同链接的页签).
+            <b>取消全部下载任务</b>：取消当前所有正在进行的下载。`
         },
         {
             element: elements.controls,
