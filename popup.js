@@ -801,11 +801,11 @@ function scanPage() {
 
                 if (duplicates.length === 1) {
                     message =
-                        '1 of the enabled files has already been sent to the download queue! Do you want to download it again?'
+                        '1 个选中的文件已经在下载队列中！还要再次下载嘛？'
                 } else {
                     message =
                         duplicates.length.toString() +
-                        ' of the enabled files have already been sent to the download queue! Do you want to download them again?'
+                        ' 个选中的文件已经在下载队列中！还要再次下载嘛？'
                 }
 
                 if (confirm(message)) {
@@ -840,7 +840,7 @@ function scanPage() {
 
     //Open extension options
     elements.actions.appendChild(
-        getOptionElem('', 'button', '配置', () => {
+        getOptionElem('', 'button', '选项', () => {
             chrome.runtime.openOptionsPage()
         })
     )
@@ -1250,7 +1250,7 @@ cancelActiveButton.addEventListener('click', () => {
     }
 })
 cancelAllButton.addEventListener('click', () => {
-    if (confirm('真的取消全部下载任务嘛?')) {
+    if (confirm('真的取消全部下载任务嘛？')) {
         chrome.runtime.sendMessage({
             cancel_downloads: true
         })

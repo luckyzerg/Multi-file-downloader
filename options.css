@@ -18,11 +18,7 @@ body > div {
 }
 
 #inputs {
-  flex: 0 0 auto;
   height: fit-content;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: flex-start;
   padding: 6px 12px;
 }
 #inputs .message:empty {
@@ -98,7 +94,6 @@ body > div {
 }
 #inputs div input,
 #inputs div label {
-  display: block;
   box-sizing: border-box;
   max-width: 100%;
   margin: 0;
