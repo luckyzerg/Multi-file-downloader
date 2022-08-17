@@ -22,6 +22,12 @@ if (window._injected_downloader) {
         use_link_text: false
     }
 
+
+    function getFileContent(text) {
+        text = text.toLowerCase();
+        return text.endsWith(".xls") || text.endsWith(".xlsx") || text.endsWith(".doc")
+    }
+
     let fileExtRegex = new RegExp(/\.([0-9a-z]+)(?:[\?#]|$)/i)
 
     function getFileExt(url) {
@@ -35,7 +41,6 @@ if (window._injected_downloader) {
 
     function findFiles() {
         let files = []
-        //{ name: '', url: '', image: true/false }
 
         let urls = []
 
@@ -45,27 +50,24 @@ if (window._injected_downloader) {
         let pictures = document.getElementsByTagName('picture')
 
         for (let i = 0; i < links.length; i++) {
-            if (
-                !links[i].href.startsWith('mailto:') &&
-                !urls.includes(links[i].href)
-            ) {
-                let fileExt = getFileExt(links[i].href)
-
-                if (fileExt || links[i].hasAttribute('download')) {
-                    urls.push(links[i].href)
-
-                    files.push({
-                        name:
-                            links[i].getAttribute('download') ||
-                            links[i].href.split('/').pop(),
-                        link_text: links[i].textContent.replace('\n', ''),
-
-                        url: links[i].href,
-
-                        image: false
-                    })
-                }
+            if (links[i].href.startsWith('mailto:' || urls.includes(links[i].href))) {
+                continue
             }
+            let fileExt = getFileExt(links[i].href)
+            let nameExt = getFileContent(links[i].textContent)
+
+            if (fileExt || nameExt || links[i].hasAttribute('download')) {
+                urls.push(links[i].href)
+                files.push({
+                    name:
+                        links[i].getAttribute('download') ||
+                        links[i].href.split('/').pop(),
+                    link_text: links[i].textContent.replace('\n', ''),
+                    url: links[i].href,
+                    image: false
+                })
+            }
+
         }
 
         for (let i = 0; i < images.length; i++) {
