@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "批量文件下载工具",
-    "version": "2.4",
+    "version": "2.5",
     "author": "luckyzerg",
     "description": "一个简单、快速的网站文件下载工具",
     "permissions": [
