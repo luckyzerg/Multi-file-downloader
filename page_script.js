@@ -39,6 +39,37 @@ if (window._injected_downloader) {
         return url ? url[1].toLowerCase() : ''
     }
 
+    const specialFilter = [
+        {
+            name: 'hfyaohai.gov.cn',
+            handle: (url) => {
+                url = url.replace(/javascript:openFile|\(|'/g, '');
+                return url.split(',')[0];
+            }
+        }
+    ]
+
+    function checkSpecial() {
+        const href = document.location.href;
+        for (const s of specialFilter) {
+            if (href.indexOf(s.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function handleSpecial(url) {
+        const href = document.location.href;
+        for (const s of specialFilter) {
+            if (href.indexOf(s.name) > -1) {
+                return s.handle(url);
+            }
+        }
+        return url;
+    }
+
+
     function findFiles() {
         let files = []
 
@@ -56,14 +87,15 @@ if (window._injected_downloader) {
             let fileExt = getFileExt(links[i].href)
             let nameExt = getFileContent(links[i].textContent)
 
-            if (fileExt || nameExt || links[i].hasAttribute('download')) {
-                urls.push(links[i].href)
+            if (fileExt || nameExt || links[i].hasAttribute('download') || checkSpecial()) {
+                const finalUrl = handleSpecial(links[i].href)
+                urls.push(finalUrl)
                 files.push({
                     name:
                         links[i].getAttribute('download') ||
                         links[i].href.split('/').pop(),
                     link_text: links[i].textContent.replace('\n', ''),
-                    url: links[i].href,
+                    url: finalUrl,
                     image: false
                 })
             }
