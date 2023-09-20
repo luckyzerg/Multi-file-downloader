@@ -31,44 +31,71 @@ if (window._injected_downloader) {
     let fileExtRegex = new RegExp(/\.([0-9a-z]+)(?:[\?#]|$)/i)
 
     function getFileExt(url) {
-        url = url
+        const ext = url
             .split('/')
             .pop()
             .match(fileExtRegex)
-
-        return url ? url[1].toLowerCase() : ''
+        return ext ? url : false
     }
 
-    const specialFilter = [
-        {
-            name: 'hfyaohai.gov.cn',
-            handle: (url) => {
-                url = url.replace(/javascript:openFile|\(|'/g, '');
-                return url.split(',')[0];
-            }
-        }
-    ]
+    function parseOpenFileUrl(link) {
+        let url = link.href;
+        url = url.replace(/javascript:openFile|\(|'/g, '');
+        return url.split(',')[0];
+    }
 
-    function checkSpecial() {
-        const href = document.location.href;
-        for (const s of specialFilter) {
-            if (href.indexOf(s.name)) {
-                return true;
-            }
+    function clearUrl(link) {
+        let finalUrl = getFileExt(link.href);
+        if (finalUrl) {
+            return finalUrl
         }
+        if (link.href.indexOf('javascript:openFile') > -1) {
+            return parseOpenFileUrl(link);
+        }
+
+        if (link.hasAttribute('download')) {
+            return link.href;
+        }
+
+        let nameExt = getFileContent(link.textContent)
+        if (nameExt) {
+            return link.href
+        }
+
         return false;
+
     }
 
-    function handleSpecial(url) {
-        const href = document.location.href;
-        for (const s of specialFilter) {
-            if (href.indexOf(s.name) > -1) {
-                return s.handle(url);
+
+    function getSelector(e) {
+        let domPath = Array();
+        //判断是否存在ID
+        if (e.id) {
+            domPath.unshift('#' + e.id.toLocaleLowerCase());
+        } else {
+            //循环匹配元素
+            while (e.nodeName.toLowerCase() !== "html") {
+                if (e.id) {
+                    //判断是否存在ID
+                    domPath.unshift('#' + e.id.toLocaleLowerCase());
+                    break;
+                } else if (e.tagName.toLocaleLowerCase() === "body") {
+                    //判断是否是BODY元素
+                    domPath.unshift(e.tagName.toLocaleLowerCase());
+                } else {
+                    //遍历获取元素顺序
+                    for (i = 0; i < e.parentNode.childElementCount; i++) {
+                        if (e.parentNode.children[i] === e) {
+                            domPath.unshift(e.tagName.toLocaleLowerCase() + ':nth-child(' + (i + 1) + ')');
+                        }
+                    }
+                }
+                e = e.parentNode;
             }
+            return domPath.toString().replaceAll(',', '>');
         }
-        return url;
-    }
 
+    }
 
     function findFiles() {
         let files = []
@@ -84,19 +111,19 @@ if (window._injected_downloader) {
             if (links[i].href.startsWith('mailto:' || urls.includes(links[i].href))) {
                 continue
             }
-            let fileExt = getFileExt(links[i].href)
-            let nameExt = getFileContent(links[i].textContent)
-
-            if (fileExt || nameExt || links[i].hasAttribute('download') || checkSpecial()) {
-                const finalUrl = handleSpecial(links[i].href)
-                urls.push(finalUrl)
+            const validUrl = clearUrl(links[i])
+            if (validUrl) {
+                urls.push(links[i].href)
                 files.push({
                     name:
                         links[i].getAttribute('download') ||
                         links[i].href.split('/').pop(),
                     link_text: links[i].textContent.replace('\n', ''),
-                    url: finalUrl,
-                    image: false
+                    url: validUrl,
+                    image: false,
+                    open: links[i].href.indexOf('javascript:openFile') > -1,
+                    click: links[i].hasAttribute('wm_ev_click'),
+                    selector: getSelector(links[i])
                 })
             }
 
@@ -108,9 +135,7 @@ if (window._injected_downloader) {
 
                 files.push({
                     name: images[i].currentSrc.split('/').pop(),
-
                     url: images[i].currentSrc,
-
                     media: true
                 })
             }
@@ -122,9 +147,7 @@ if (window._injected_downloader) {
 
                 files.push({
                     name: videos[i].src.split('/').pop(),
-
                     url: videos[i].src,
-
                     media: true
                 })
             }

@@ -119,6 +119,7 @@ function textareaInputEvent(event) {
     this.style.height = ' 0'
     this.style.height = this.scrollHeight + 'px'
 }
+
 function textareaBlurEvent() {
     this.value = this.value.trim()
 
@@ -140,10 +141,12 @@ function getFileExt(url) {
 
     return url ? url[1].toLowerCase() : ''
 }
+
 function getFileDomain(url) {
     var domain = url.split('/')[url.indexOf('://') == -1 ? 0 : 2]
     return domain.split(':')[0]
 }
+
 function getFileName(url) {
     return url.split('/').pop()
 }
@@ -353,20 +356,52 @@ function updateList() {
     }
 }
 
+function mockCall(file) {
+    chrome.tabs.executeScript(
+        activeTabId,
+        {
+            code: `window.open('${file.url}')`
+        },
+        e => {
+            console.log(e)
+        }
+    )
+}
+
+function mockClick(file) {
+    chrome.tabs.executeScript(
+        activeTabId,
+        {
+            code: `$("${file.selector}")[0].click()`
+        },
+        e => {
+            console.log(e)
+        }
+    )
+}
+
 function downloadFile(file) {
-    chrome.runtime.sendMessage({
-        download: true,
+    console.log(5,file)
+    if (file.click) {
+        mockClick(file);
+    } else if (file.open) {
+        mockCall(file);
+    } else {
+        chrome.runtime.sendMessage({
+            download: true,
 
-        source: activeTabUrl,
+            source: activeTabUrl,
 
-        url: file.url,
-        name: options.download_custom_name ? file.name : null,
-        subdirectory: options.download_subdirectory,
+            url: file.url,
+            name: options.download_custom_name ? file.name : null,
+            subdirectory: options.download_subdirectory,
 
-        select_location: options.download_select_location,
-
-        conflictAction: options.download_overwrite ? 'overwrite' : 'uniquify'
-    })
+            select_location: options.download_select_location,
+            script: file.script,
+            activeTabId: activeTabId,
+            conflictAction: options.download_overwrite ? 'overwrite' : 'uniquify'
+        })
+    }
 
     if (!downloaded_urls.includes(file.url)) {
         downloaded_urls.push(file.url)
@@ -374,6 +409,7 @@ function downloadFile(file) {
 }
 
 let lastSaveTime = 0
+
 function updateFilterOptions(filters) {
     if (
         filters.regex &&
@@ -426,6 +462,7 @@ function updateFilterOptions(filters) {
         )
     }
 }
+
 function writeFilterStorage() {
     chrome.storage.local.get('site_filters', result => {
         let activeDomain = getFileDomain(activeTabUrl)
@@ -462,6 +499,7 @@ function writeFilterStorage() {
         })
     })
 }
+
 function saveFilterOptions() {
     setTimeout(() => {
         if (Date.now() - lastSaveTime > 900) {
@@ -501,6 +539,7 @@ function scanPage() {
 
         updateList()
     }
+
     function onOptionChange(optionName) {
         options[optionName] = this.value
 
@@ -517,6 +556,7 @@ function scanPage() {
 
         chrome.storage.sync.set(obj)
     }
+
     function saveOptionToStorage(optionName) {
         let obj = {}
         obj[optionName] = this.value
@@ -797,17 +837,7 @@ function scanPage() {
             }
 
             if (duplicates.length > 0) {
-                let message = ''
-
-                if (duplicates.length === 1) {
-                    message =
-                        '1 个选中的文件已经在下载队列中！还要再次下载嘛？'
-                } else {
-                    message =
-                        duplicates.length.toString() +
-                        ' 个选中的文件已经在下载队列中！还要再次下载嘛？'
-                }
-
+                let message = duplicates.length.toString() + ' 个选中的文件已经在下载队列中！还要再次下载嘛？'
                 if (confirm(message)) {
                     for (let i = 0; i < duplicates.length; i++) {
                         downloadFile(duplicates[i])
@@ -834,7 +864,7 @@ function scanPage() {
     //Open downloads page
     elements.actions.appendChild(
         getOptionElem('', 'button', '查看下载页面', () => {
-            chrome.tabs.create({ url: 'chrome://downloads' })
+            chrome.tabs.create({url: 'chrome://downloads'})
         })
     )
 
@@ -1116,8 +1146,6 @@ chrome.runtime.onMessage.addListener(message => {
     }
 
     if (typeof message.downloads === 'object') {
-        console.log(message.downloads)
-
         if (message.downloads.active === 0) {
             elements.download_status.textContent = '没有下载中的文件'
             elements.download_status.parentNode.className = ''
@@ -1185,7 +1213,7 @@ elements.list.addEventListener('click', event => {
 })
 
 chrome.tabs.query(
-    { active: true, lastFocusedWindow: true, currentWindow: true },
+    {active: true, lastFocusedWindow: true, currentWindow: true},
     tabs => {
         if (tabs.length > 0) {
             activeTabUrl = tabs[0].url

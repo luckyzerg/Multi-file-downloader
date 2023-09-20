@@ -18,7 +18,16 @@ function processDownloadQueue() {
     requesting_download = true
 
     let file = to_download_list.shift()
+    if(file.script){
+        mockCall(file.activeTabId,file.script)
+    }else{
+        doDownloadFile(file);
+    }
 
+
+}
+
+function doDownloadFile(file){
     chrome.downloads.download(
         {
             url: file.url,
@@ -109,6 +118,21 @@ function sendStatsUpdate() {
             waiting: to_download_list.length
         }
     })
+}
+
+function mockCall(activeTabId,execCode){
+    chrome.tabs.executeScript(
+        activeTabId,
+        {
+            code: execCode
+        },
+        e => {
+            requesting_download = false
+            console.log(e)
+            sendStatsUpdate()
+            processDownloadQueue()
+        }
+    )
 }
 
 chrome.browserAction.setBadgeBackgroundColor({

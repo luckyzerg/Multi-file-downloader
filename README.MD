@@ -24,3 +24,4 @@ Injected into the active tab when the extension popup is shown, searches for lin
 ### popup.html / popup.js
 Shows file list, filtering options, download options, and a download status bar.
 
+89980743

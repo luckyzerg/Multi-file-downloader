@@ -1,13 +1,16 @@
 {
     "manifest_version": 2,
     "name": "批量文件下载工具",
-    "version": "2.6",
+    "version": "2.7",
     "author": "luckyzerg",
     "description": "一个简单、快速的网站文件下载工具",
     "permissions": [
+        "tabs",
         "downloads",
         "activeTab",
-        "storage"
+        "storage",
+        "http://*/*",
+        "https://*/*"
     ],
     "background": {
         "scripts": [
